@@ -35,12 +35,14 @@ CREATE SEQUENCE seq_closure    START WITH 1 INCREMENT BY 1;
 -- ---------------------------------------------------------------------
 CREATE TABLE Citizen (
     Citizen_ID    NUMBER(6)     PRIMARY KEY,
-    Name          VARCHAR2(100) NOT NULL,
+    First_Name    VARCHAR2(100) NOT NULL,
+    Last_Name     VARCHAR2(100) NOT NULL,
     Phone_Number  VARCHAR2(15)  NOT NULL,
     Email         VARCHAR2(100) UNIQUE,
-    CONSTRAINT chk_citizen_phone_len CHECK (LENGTH(Phone_Number) >= 10)
+    Password      VARCHAR2(256),
+    CONSTRAINT chk_citizen_phone_len
+        CHECK (LENGTH(Phone_Number) >= 10)
 );
-
 -- ---------------------------------------------------------------------
 -- Table: Department
 -- ---------------------------------------------------------------------
@@ -54,20 +56,15 @@ CREATE TABLE Department (
 -- Table: Complaint
 -- ---------------------------------------------------------------------
 CREATE TABLE Complaint (
-    Complaint_ID     NUMBER(6)      PRIMARY KEY,
-    Complaint_Title  VARCHAR2(150)  NOT NULL,
-    Complaint_Date   DATE           DEFAULT SYSDATE NOT NULL,
-    Status           VARCHAR2(20)   DEFAULT 'Open' NOT NULL,
-    Priority         VARCHAR2(10)   DEFAULT 'Medium' NOT NULL,
-    Description      VARCHAR2(1000),
-    Citizen_ID       NUMBER(6)      NOT NULL,
-    DepartmentID     NUMBER(4)      NOT NULL,
-    CONSTRAINT chk_complaint_status   CHECK (Status IN ('Open','In Progress','Escalated','Closed')),
-    CONSTRAINT chk_complaint_priority CHECK (Priority IN ('Low','Medium','High')),
-    CONSTRAINT fk_complaint_citizen FOREIGN KEY (Citizen_ID)   REFERENCES Citizen(Citizen_ID),
-    CONSTRAINT fk_complaint_dept    FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID)
+    Complaint_ID       NUMBER(6)      PRIMARY KEY,
+    Complaint_Title    VARCHAR2(150)  NOT NULL,
+    Description        VARCHAR2(1000) NOT NULL,
+    Complaint_Date     DATE           NOT NULL,
+    Status             VARCHAR2(20)   NOT NULL,
+    Priority           VARCHAR2(10)   NOT NULL,
+    Citizen_ID         NUMBER(6)      NOT NULL,
+    DepartmentID       NUMBER(4)      NOT NULL
 );
-
 -- ---------------------------------------------------------------------
 -- Table: Escalation  (1:1 with Complaint -> Complaint_ID is UNIQUE)
 -- ---------------------------------------------------------------------
