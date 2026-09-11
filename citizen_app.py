@@ -277,7 +277,8 @@ class CitizenApp(ctk.CTk):
 
             cursor.execute(
                 """
-                SELECT NAME, PASSWORD
+                SELECT FIRST_NAME || ' ' || LAST_NAME AS CITIZEN_NAME,
+                       PASSWORD
                 FROM Citizen
                 WHERE CITIZEN_ID = :cid
                 """,
@@ -378,10 +379,10 @@ class CitizenApp(ctk.CTk):
         self.citizen_inputs = {}
 
         fields = [
-            ("Full Name", "entry_name", "e.g. Nitika Jacob", 2, 0, None),
-            ("Email Address", "entry_email", "e.g. user@example.com", 2, 1, None),
-            ("Phone Number", "entry_phone", "e.g. 9876543210", 3, 0, None),
-            ("Address", "entry_address", "e.g. Kochi, Kerala", 3, 1, None),
+            ("First Name", "entry_first_name", "e.g. Nitika", 2, 0, None),
+            ("Last Name", "entry_last_name", "e.g. Jacob", 2, 1, None),
+            ("Email Address", "entry_email", "e.g. user@example.com", 3, 0, None),
+            ("Phone Number", "entry_phone", "e.g. 9876543210", 3, 1, None),
             ("Password", "entry_password", "Choose a password", 4, 0, "•"),
             ("Confirm Password", "entry_password_confirm", "Re-enter password", 4, 1, "•"),
         ]
@@ -435,18 +436,18 @@ class CitizenApp(ctk.CTk):
 
     def insert_citizen(self):
 
-        name = self.citizen_inputs["entry_name"].get().strip()
+        first_name = self.citizen_inputs["entry_first_name"].get().strip()
+        last_name = self.citizen_inputs["entry_last_name"].get().strip()
         email = self.citizen_inputs["entry_email"].get().strip()
         phone = self.citizen_inputs["entry_phone"].get().strip()
-        address = self.citizen_inputs["entry_address"].get().strip()
         password = self.citizen_inputs["entry_password"].get()
         password_confirm = self.citizen_inputs["entry_password_confirm"].get()
 
-        if not name or not email or not phone or not address or not password:
+        if not first_name or not last_name or not email or not phone or not password:
 
             messagebox.showwarning(
                 "Validation Error",
-                "All fields (Name, Email, Phone, Address, Password) are required!"
+                "First Name, Last Name, Email, Phone, and Password are required!"
             )
 
             return
@@ -477,19 +478,19 @@ class CitizenApp(ctk.CTk):
 
             query = """
                 INSERT INTO Citizen
-                (CITIZEN_ID, NAME, PHONE_NUMBER, EMAIL, ADDRESS, PASSWORD)
+                (CITIZEN_ID, FIRST_NAME, LAST_NAME, PHONE_NUMBER, EMAIL, PASSWORD)
                 VALUES
-                (Citizen_Seq.NEXTVAL, :name, :phone, :email, :address, :password)
+                (Citizen_Seq.NEXTVAL, :first_name, :last_name, :phone, :email, :password)
                 RETURNING CITIZEN_ID INTO :generated_id
             """
 
             cursor.execute(
                 query,
                 {
-                    "name": name,
+                    "first_name": first_name,
+                    "last_name": last_name,
                     "phone": phone,
                     "email": email,
-                    "address": address,
                     "password": hash_password(password),
                     "generated_id": generated_id
                 }
@@ -501,7 +502,7 @@ class CitizenApp(ctk.CTk):
 
             messagebox.showinfo(
                 "Registration Successful",
-                f"Welcome, {name}!\n\n"
+                f"Welcome, {first_name} {last_name}!\n\n"
                 f"Your Citizen ID is: {new_id}\n"
                 f"Keep this ID — you'll use it with your password to log in."
             )
