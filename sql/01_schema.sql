@@ -66,29 +66,32 @@ CREATE TABLE Complaint (
     DepartmentID       NUMBER(4)      NOT NULL
 );
 -- ---------------------------------------------------------------------
--- Table: Escalation  (1:1 with Complaint -> Complaint_ID is UNIQUE)
+-- Table: Escalation (dependent on Complaint; 1:0..1)
 -- ---------------------------------------------------------------------
 CREATE TABLE Escalation (
-    Escalation_ID    NUMBER(6)     PRIMARY KEY,
+    Complaint_ID     NUMBER(6)     PRIMARY KEY,
+    Escalation_ID    NUMBER(6)     UNIQUE,
     Escalated_To     VARCHAR2(100) NOT NULL,
     Escalation_Date  DATE          DEFAULT SYSDATE,
     Reason           VARCHAR2(500),
-    Complaint_ID     NUMBER(6)     NOT NULL UNIQUE,
-    CONSTRAINT fk_escalation_complaint FOREIGN KEY (Complaint_ID) REFERENCES Complaint(Complaint_ID)
+    CONSTRAINT fk_escalation_complaint
+        FOREIGN KEY (Complaint_ID)
+        REFERENCES Complaint(Complaint_ID)
 );
 
 -- ---------------------------------------------------------------------
--- Table: Closure  (1:1 with Complaint -> Complaint_ID is UNIQUE)
+-- Table: Closure (dependent on Complaint; 1:0..1)
 -- ---------------------------------------------------------------------
 CREATE TABLE Closure (
-    Closure_ID    NUMBER(6)     PRIMARY KEY,
+    Complaint_ID  NUMBER(6)     PRIMARY KEY,
+    Closure_ID    NUMBER(6)     UNIQUE,
     Closure_Date  DATE          DEFAULT SYSDATE,
     Resolution    VARCHAR2(1000),
     Feedback      VARCHAR2(500),
-    Complaint_ID  NUMBER(6)     NOT NULL UNIQUE,
-    CONSTRAINT fk_closure_complaint FOREIGN KEY (Complaint_ID) REFERENCES Complaint(Complaint_ID)
+    CONSTRAINT fk_closure_complaint
+        FOREIGN KEY (Complaint_ID)
+        REFERENCES Complaint(Complaint_ID)
 );
-
 -- ---------------------------------------------------------------------
 -- Auto-increment triggers (BEFORE INSERT) — classic Oracle pattern
 -- ---------------------------------------------------------------------
