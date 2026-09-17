@@ -17,7 +17,7 @@ import oracledb
 # =========================================================
 
 DB_USER = "system"
-DB_PASSWORD = "u2403217"
+DB_PASSWORD = "dbms"
 DB_DSN = "localhost:1521/XEPDB1"
 
 
