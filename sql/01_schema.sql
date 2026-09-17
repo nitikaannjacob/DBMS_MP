@@ -111,28 +111,6 @@ ADD CONSTRAINT fk_complaint_department
 FOREIGN KEY (DepartmentID)
 REFERENCES Department(DepartmentID);
 
--- Escalation constraints
-
-ALTER TABLE Escalation
-ADD CONSTRAINT uq_escalation_complaint
-UNIQUE (Complaint_ID);
-
-ALTER TABLE Escalation
-ADD CONSTRAINT fk_escalation_complaint
-FOREIGN KEY (Complaint_ID)
-REFERENCES Complaint(Complaint_ID);
-
--- Closure constraints
-
-ALTER TABLE Closure
-ADD CONSTRAINT uq_closure_complaint
-UNIQUE (Complaint_ID);
-
-ALTER TABLE Closure
-ADD CONSTRAINT fk_closure_complaint
-FOREIGN KEY (Complaint_ID)
-REFERENCES Complaint(Complaint_ID);
-
 -- Commit
 
 COMMIT;
