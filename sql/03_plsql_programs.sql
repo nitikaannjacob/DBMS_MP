@@ -177,7 +177,7 @@ PROMPT ===== PL/SQL objects compiled successfully =====
 -- =====================================================================
 -- DEMO CALLS (uncomment / run individually to test in SQL*Plus)
 -- =====================================================================
--- EXEC prc_department_report(1);
--- EXEC prc_auto_escalate(5);
--- SELECT fn_days_open(3) FROM DUAL;
--- SELECT fn_dept_complaint_count(2) FROM DUAL;
+EXEC prc_department_report(1);
+EXEC prc_auto_escalate(5);
+SELECT fn_days_open(3) FROM DUAL;
+SELECT fn_dept_complaint_count(2) FROM DUAL;
