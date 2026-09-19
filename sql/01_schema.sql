@@ -44,49 +44,51 @@ INCREMENT BY 1;
 -- Citizen
 
 CREATE TABLE Citizen (
-Citizen_ID NUMBER(6) DEFAULT ON NULL seq_citizen.NEXTVAL PRIMARY KEY,
-First_Name VARCHAR2(100) NOT NULL,
-Last_Name VARCHAR2(100) NOT NULL,
-Phone_Number VARCHAR2(15) NOT NULL,
-Email VARCHAR2(100) UNIQUE,
-Password VARCHAR2(256)
+    Citizen_ID NUMBER(6) DEFAULT ON NULL seq_citizen.NEXTVAL PRIMARY KEY,
+    First_Name VARCHAR2(100) NOT NULL,
+    Last_Name VARCHAR2(100) NOT NULL,
+    Phone_Number VARCHAR2(15) NOT NULL,
+    Email VARCHAR2(100) UNIQUE,
+    Password VARCHAR2(256)
 );
 
 -- Department
 
 CREATE TABLE Department (
-DepartmentID NUMBER(4) DEFAULT ON NULL seq_department.NEXTVAL PRIMARY KEY,
-Dept_Name VARCHAR2(100) NOT NULL UNIQUE,
-Contact_No VARCHAR2(15)
+    DepartmentID NUMBER(4) DEFAULT ON NULL seq_department.NEXTVAL PRIMARY KEY,
+    Dept_Name VARCHAR2(100) NOT NULL UNIQUE,
+    Contact_No VARCHAR2(15)
 );
 
 -- Complaint
 
 CREATE TABLE Complaint (
-Complaint_ID NUMBER(6) DEFAULT ON NULL seq_complaint.NEXTVAL PRIMARY KEY,
-Complaint_Title VARCHAR2(150) NOT NULL,
-Description VARCHAR2(1000) NOT NULL,
-Complaint_Date DATE NOT NULL,
-Status VARCHAR2(20) NOT NULL,
-Priority VARCHAR2(10) NOT NULL,
-Citizen_ID NUMBER(6) NOT NULL,
-DepartmentID NUMBER(4) NOT NULL
+    Complaint_ID NUMBER(6) DEFAULT ON NULL seq_complaint.NEXTVAL PRIMARY KEY,
+    Complaint_Title VARCHAR2(150) NOT NULL,
+    Description VARCHAR2(1000) NOT NULL,
+    Complaint_Date DATE NOT NULL,
+    Status VARCHAR2(20) NOT NULL,
+    Priority VARCHAR2(10) NOT NULL,
+    Citizen_ID NUMBER(6) NOT NULL,
+    DepartmentID NUMBER(4) NOT NULL
 );
--- Escalation
+
+-- Escalation  (1:1 with Complaint -> Complaint_ID is UNIQUE + has an FK)
 
 CREATE TABLE Escalation (
     Escalation_ID NUMBER(6) DEFAULT ON NULL seq_escalation.NEXTVAL PRIMARY KEY,
     Escalated_To VARCHAR2(100) NOT NULL,
     Escalation_Date DATE DEFAULT SYSDATE,
     Reason VARCHAR2(500),
-    Complaint_ID NUMBER(6) NOT NULL
+    Complaint_ID NUMBER(6) NOT NULL UNIQUE   -- FIX: was missing UNIQUE
 );
 
--- Closure
+-- Closure  (Complaint_ID as PK enforces the 1:1 relationship;
+--           Closure_ID now auto-fills like every other ID column)
 
 CREATE TABLE Closure (
     Complaint_ID NUMBER(6) PRIMARY KEY,
-    Closure_ID NUMBER(6) UNIQUE,
+    Closure_ID NUMBER(6) DEFAULT ON NULL seq_closure.NEXTVAL UNIQUE,  -- FIX: added DEFAULT ON NULL
     Closure_Date DATE DEFAULT SYSDATE,
     Resolution VARCHAR2(1000),
     Feedback VARCHAR2(500),
@@ -110,6 +112,11 @@ ALTER TABLE Complaint
 ADD CONSTRAINT fk_complaint_department
 FOREIGN KEY (DepartmentID)
 REFERENCES Department(DepartmentID);
+
+ALTER TABLE Escalation
+ADD CONSTRAINT fk_escalation_complaint
+FOREIGN KEY (Complaint_ID)
+REFERENCES Complaint(Complaint_ID);
 
 -- Commit
 
